@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Details - College News Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2 data-translate="college-name">Excellence University News Portal</h2>
+            </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link" data-translate="home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link" data-translate="contact">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <select class="language-select" id="language-select">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Back Navigation -->
+        <div class="container">
+            <div class="back-navigation">
+                <button class="back-btn" id="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span data-translate="back-to-news">Back to News</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Article Details Section -->
+        <article class="article-details" id="article-details">
+            <div class="container">
+                <!-- Loading Spinner -->
+                <div class="loading-spinner" id="loading-spinner">
+                    <div class="spinner"></div>
+                    <p data-translate="loading">Loading article...</p>
+                </div>
+
+                <!-- Article Content (will be populated by JavaScript) -->
+                <div class="article-content" id="article-content" style="display: none;">
+                    <!-- Article header -->
+                    <header class="article-header">
+                        <div class="article-category" id="article-category"></div>
+                        <h1 class="article-title" id="article-title"></h1>
+                        
+                        <div class="article-meta">
+                            <div class="article-author">
+                                <i class="fas fa-user"></i>
+                                <span data-translate="by">By</span> <span id="article-author"></span>
+                            </div>
+                            <div class="article-date">
+                                <i class="fas fa-calendar"></i>
+                                <span id="article-date"></span>
+                            </div>
+                            <div class="article-source">
+                                <i class="fas fa-globe"></i>
+                                <span data-translate="source">Source:</span> <span id="article-source"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="article-actions">
+                            <button class="favorite-btn" id="favorite-btn" title="Add to Favorites">
+                                <i class="fas fa-heart"></i>
+                                <span data-translate="add-to-favorites">Add to Favorites</span>
+                            </button>
+                            <button class="share-btn" id="share-btn" title="Share Article">
+                                <i class="fas fa-share-alt"></i>
+                                <span data-translate="share">Share</span>
+                            </button>
+                        </div>
+                    </header>
+
+                    <!-- Article image -->
+                    <div class="article-image-container">
+                        <img class="article-image" id="article-image" alt="Article Image" />
+                    </div>
+
+                    <!-- Article body -->
+                    <div class="article-body">
+                        <div class="article-description" id="article-description"></div>
+                        <div class="article-full-content" id="article-full-content"></div>
+                        
+                        <!-- Read full article link -->
+                        <div class="read-more-container">
+                            <a class="read-full-article" id="read-full-article" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-external-link-alt"></i>
+                                <span data-translate="read-full-article">Read Full Article at Source</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error message -->
+                <div class="error-message" id="error-message" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3 data-translate="error-title">Article Not Found</h3>
+                    <p data-translate="error-message">Sorry, we couldn't load this article. It may have been removed or the link is invalid.</p>
+                    <a href="index.html" class="btn btn-primary" data-translate="back-to-home">Back to Home</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Related Articles Section -->
+        <section class="related-articles" id="related-articles">
+            <div class="container">
+                <h2 data-translate="related-articles">Related Articles</h2>
+                <div class="news-grid" id="related-news-grid">
+                    <!-- Related articles will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-translate="college-name">Excellence University</h3>
+                    <p data-translate="footer-description">Your trusted source for the latest news and updates.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 data-translate="quick-links">Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html" data-translate="home">Home</a></li>
+                        <li><a href="contact.html" data-translate="contact">Contact Us</a></li>
+                        <li><a href="#" data-translate="privacy">Privacy Policy</a></li>
+                        <li><a href="#" data-translate="terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 data-translate="connect">Connect With Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 <span data-translate="college-name">Excellence University</span>. <span data-translate="rights">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

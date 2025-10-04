@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Excellence News Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2 data-translate="portal-name">Excellence News Portal</h2>
+            </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link" data-translate="home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link active" data-translate="contact">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <select class="language-select" id="language-select">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Contact Hero Section -->
+        <section class="contact-hero">
+            <div class="container">
+                <h1 class="hero-title" data-translate="contact-title">Contact Us</h1>
+                <p class="hero-subtitle" data-translate="contact-subtitle">We'd love to hear from you. Send us a message!</p>
+            </div>
+        </section>
+
+        <!-- Contact Form Section -->
+        <section class="contact-section">
+            <div class="container">
+                <div class="contact-grid">
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <h2 data-translate="get-in-touch">Get in Touch</h2>
+                        <p data-translate="contact-description">Have a question, suggestion, or feedback? We're here to help!</p>
+                        
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <h4 data-translate="address">Address</h4>
+                                    <p>Excellence News Portal Headquarters<br>
+                                    123 News Street<br>
+                                    Media City, MC 12345</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <h4 data-translate="phone">Phone</h4>
+                                    <p>+1 (555) 123-4567</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <h4 data-translate="email">Email</h4>
+                                    <p>contact@excellencenews.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="contact-text">
+                                    <h4 data-translate="hours">Office Hours</h4>
+                                    <p data-translate="office-hours">Monday - Friday: 9:00 AM - 5:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Social Media Links -->
+                        <div class="contact-social">
+                            <h4 data-translate="follow-us">Follow Us</h4>
+                            <div class="social-links">
+                                <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="contact-form-container">
+                        <h2 data-translate="send-message">Send us a Message</h2>
+                        
+                        <!-- Success/Error Messages -->
+                        <div class="form-message" id="form-message" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <p data-translate="message-sent">Thank you! Your message has been sent successfully.</p>
+                        </div>
+                        
+                        <form class="contact-form" id="contact-form" novalidate>
+                            <div class="form-group">
+                                <label for="name" data-translate="name-label">Full Name</label>
+                                <input type="text" id="name" name="name" class="form-input" required 
+                                       data-translate-placeholder="name-placeholder">
+                                <span class="error-message" id="name-error"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" data-translate="email-label">Email Address</label>
+                                <input type="email" id="email" name="email" class="form-input" required 
+                                       data-translate-placeholder="email-placeholder">
+                                <span class="error-message" id="email-error"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="subject" data-translate="subject-label">Subject</label>
+                                <select id="subject" name="subject" class="form-select" required>
+                                    <option value="" data-translate="subject-placeholder">Select a subject</option>
+                                    <option value="general" data-translate="general-inquiry">General Inquiry</option>
+                                    <option value="technical" data-translate="technical-support">Technical Support</option>
+                                    <option value="feedback" data-translate="feedback">Feedback</option>
+                                    <option value="partnership" data-translate="partnership">Partnership</option>
+                                    <option value="other" data-translate="other">Other</option>
+                                </select>
+                                <span class="error-message" id="subject-error"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message" data-translate="message-label">Message</label>
+                                <textarea id="message" name="message" class="form-textarea" rows="5" required 
+                                          data-translate-placeholder="message-placeholder"></textarea>
+                                <span class="error-message" id="message-error"></span>
+                            </div>
+                            
+                            <!-- Privacy Checkbox -->
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="privacy" name="privacy" required>
+                                    <span class="checkmark"></span>
+                                    <span data-translate="privacy-agreement">I agree to the Privacy Policy and Terms of Service</span>
+                                </label>
+                                <span class="error-message" id="privacy-error"></span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <button type="submit" class="submit-btn" id="submit-btn">
+                                    <span class="btn-text" data-translate="send-message-btn">Send Message</span>
+                                    <span class="btn-loading" style="display: none;">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span data-translate="sending">Sending...</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <h2 data-translate="faq-title">Frequently Asked Questions</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question" data-translate="faq-q1">How often is the news updated?</div>
+                        <div class="faq-answer" data-translate="faq-a1">Our news is updated every hour to bring you the latest stories from around the world.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-translate="faq-q2">Can I submit news tips?</div>
+                        <div class="faq-answer" data-translate="faq-a2">Yes! Please use the contact form above to submit news tips and we'll review them promptly.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-translate="faq-q3">Is the news portal free to use?</div>
+                        <div class="faq-answer" data-translate="faq-a3">Absolutely! Our news portal is completely free for all users.</div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <div class="faq-question" data-translate="faq-q4">How can I save my favorite articles?</div>
+                        <div class="faq-answer" data-translate="faq-a4">Click the heart icon on any article to save it to your favorites. Your preferences are stored locally.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-translate="portal-name">Excellence News Portal</h3>
+                    <p data-translate="footer-description">Your trusted source for the latest news and updates.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 data-translate="quick-links">Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html" data-translate="home">Home</a></li>
+                        <li><a href="contact.html" data-translate="contact">Contact Us</a></li>
+                        <li><a href="#" data-translate="privacy">Privacy Policy</a></li>
+                        <li><a href="#" data-translate="terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 data-translate="connect">Connect With Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 <span data-translate="portal-name">Excellence News Portal</span>. <span data-translate="rights">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

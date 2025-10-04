@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excellence News Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2 data-translate="portal-name">Excellence News Portal</h2>
+            </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-menu" id="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active" data-translate="home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link" data-translate="contact">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <button class="theme-toggle" id="theme-toggle" title="Toggle Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <select class="language-select" id="language-select">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                    </select>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section with Search -->
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="hero-title" data-translate="hero-title">Stay Updated with Latest News</h1>
+                <p class="hero-subtitle" data-translate="hero-subtitle">Get the most recent news from around the world</p>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" class="search-input" id="search-input" 
+                           placeholder="Search for news..." data-translate-placeholder="search-placeholder">
+                    <button class="search-btn" id="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <!-- Category Filter -->
+                <div class="category-filter">
+                    <button class="category-btn active" data-category="general" data-translate="general">General</button>
+                    <button class="category-btn" data-category="business" data-translate="business">Business</button>
+                    <button class="category-btn" data-category="technology" data-translate="technology">Technology</button>
+                    <button class="category-btn" data-category="sports" data-translate="sports">Sports</button>
+                    <button class="category-btn" data-category="health" data-translate="health">Health</button>
+                    <button class="category-btn" data-category="entertainment" data-translate="entertainment">Entertainment</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Grid Section -->
+        <section class="news-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 data-translate="latest-news">Latest News</h2>
+                    <button class="favorites-toggle" id="favorites-toggle">
+                        <i class="fas fa-heart"></i>
+                        <span data-translate="view-favorites">View Favorites</span>
+                    </button>
+                </div>
+                
+                <!-- Loading Spinner -->
+                <div class="loading-spinner" id="loading-spinner">
+                    <div class="spinner"></div>
+                    <p data-translate="loading">Loading news...</p>
+                </div>
+                
+                <!-- News Grid -->
+                <div class="news-grid" id="news-grid">
+                    <!-- News cards will be dynamically inserted here -->
+                </div>
+                
+                <!-- Load More Button -->
+                <div class="load-more-container">
+                    <button class="load-more-btn" id="load-more-btn" data-translate="load-more">Load More News</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-translate="portal-name">Excellence News Portal</h3>
+                    <p data-translate="footer-description">Your trusted source for the latest news and updates.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 data-translate="quick-links">Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html" data-translate="home">Home</a></li>
+                        <li><a href="contact.html" data-translate="contact">Contact Us</a></li>
+                        <li><a href="#" data-translate="privacy">Privacy Policy</a></li>
+                        <li><a href="#" data-translate="terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 data-translate="connect">Connect With Us</h4>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 <span data-translate="portal-name">Excellence News Portal</span>. <span data-translate="rights">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
