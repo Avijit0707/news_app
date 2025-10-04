@@ -475,6 +475,8 @@ img {
     height: 200px;
     object-fit: cover;
     transition: transform var(--transition-slow);
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .news-card:hover .news-card-image {
@@ -743,6 +745,9 @@ img {
     width: 100%;
     height: auto;
     display: block;
+    background-color: var(--bg-tertiary);
+    min-height: 300px;
+    object-fit: cover;
 }
 
 .article-body {

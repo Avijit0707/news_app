@@ -10,7 +10,7 @@ const CONFIG = {
     DEFAULT_COUNTRY: 'us',
     DEFAULT_CATEGORY: 'general',
     
-    PAGE_SIZE: 12,
+    PAGE_SIZE: 20,
     
     // Local storage keys
     STORAGE_KEYS: {
@@ -29,7 +29,8 @@ const AppState = {
     newsArticles: [],
     favoriteArticles: JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEYS.FAVORITES)) || [],
     currentLanguage: localStorage.getItem(CONFIG.STORAGE_KEYS.LANGUAGE) || 'en',
-    showingFavorites: false
+    showingFavorites: false,
+    navigationHistory: JSON.parse(localStorage.getItem('nav-history') || '[]')
 };
 
 // ===========================
@@ -405,20 +406,36 @@ function showLoadingSpinner(show) {
 
 function createNewsCard(article, index) {
     const isFavorite = AppState.favoriteArticles.some(fav => fav.url === article.url);
+    
+    // Better fallback image with multiple options
+    let imageUrl = article.urlToImage;
+    
+    // If no image or invalid image URL, use fallback
+    if (!imageUrl || imageUrl.includes('removed') || imageUrl === 'null') {
+        imageUrl = `https://via.placeholder.com/400x300/2563eb/ffffff?text=${encodeURIComponent(article.source?.name || 'News')}`;
+    }
+    
     const defaultImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"%3E%3Crect width="400" height="300" fill="%23e2e8f0"/%3E%3Ctext x="200" y="150" text-anchor="middle" dy=".3em" fill="%2364748b" font-family="sans-serif" font-size="16"%3ENo Image Available%3C/text%3E%3C/svg%3E';
     
+    // Create unique identifiers for this article
+    const articleId = `article-${Date.now()}-${index}`;
+    
+    // Store article data safely
+    window.tempArticleData = window.tempArticleData || {};
+    window.tempArticleData[articleId] = article;
+    
     return `
-        <article class="news-card fade-in" onclick="openArticleDetails('${encodeURIComponent(JSON.stringify(article))}')" 
+        <article class="news-card fade-in" data-article-id="${articleId}" 
                  style="animation-delay: ${index * 0.1}s">
             <button class="favorite-btn-card ${isFavorite ? 'active' : ''}" 
-                    onclick="event.stopPropagation(); toggleFavorite('${encodeURIComponent(JSON.stringify(article))}')"
+                    data-article-id="${articleId}" data-action="favorite"
                     title="${isFavorite ? translations[AppState.currentLanguage]['remove-from-favorites'] : translations[AppState.currentLanguage]['add-to-favorites']}">
                 <i class="fas fa-heart"></i>
             </button>
             <img class="news-card-image" 
-                 src="${article.urlToImage || defaultImage}" 
-                 alt="${article.title}"
-                 onerror="this.src='${defaultImage}'">
+                 src="${imageUrl}" 
+                 alt="${article.title?.replace(/"/g, '&quot;') || 'News Article'}"
+                 onerror="this.onerror=null; this.src='${defaultImage}'; console.log('Image failed to load:', this.src);">
             <div class="news-card-content">
                 <div class="news-card-category">${article.source?.name || 'Unknown'}</div>
                 <h3 class="news-card-title">${article.title}</h3>
@@ -452,6 +469,52 @@ function renderNewsGrid(articles) {
     
     const articlesToShow = AppState.showingFavorites ? AppState.favoriteArticles : articles;
     newsGrid.innerHTML = articlesToShow.map((article, index) => createNewsCard(article, index)).join('');
+    
+    // Add event listeners after rendering
+    addNewsCardEventListeners();
+}
+
+// Add event listeners to news cards
+function addNewsCardEventListeners(container = null) {
+    // Add click listeners to news cards
+    const targetContainer = container || document;
+    targetContainer.querySelectorAll('.news-card').forEach(card => {
+        const articleId = card.getAttribute('data-article-id');
+        if (articleId && window.tempArticleData && window.tempArticleData[articleId]) {
+            card.addEventListener('click', (event) => {
+                // Don't trigger if clicking on favorite button
+                if (event.target.closest('.favorite-btn-card')) return;
+                
+                const article = window.tempArticleData[articleId];
+                openArticleDetailsFromData(article);
+            });
+        }
+    });
+    
+    // Add click listeners to favorite buttons
+    targetContainer.querySelectorAll('.favorite-btn-card').forEach(btn => {
+        const articleId = btn.getAttribute('data-article-id');
+        if (articleId && window.tempArticleData && window.tempArticleData[articleId]) {
+            btn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const article = window.tempArticleData[articleId];
+                toggleFavoriteFromData(article);
+            });
+        }
+    });
+}
+
+function openArticleDetailsFromData(article) {
+    try {
+        // Store article data in localStorage for details page
+        localStorage.setItem('current-article', JSON.stringify(article));
+        
+        // Simple navigation: just go to details page
+        window.location.href = 'details.html';
+    } catch (error) {
+        console.error('Error opening article details:', error);
+        showNotification('Error opening article details', 'error');
+    }
 }
 
 function openArticleDetails(encodedArticle) {
@@ -461,7 +524,7 @@ function openArticleDetails(encodedArticle) {
         // Store article data in localStorage for details page
         localStorage.setItem('current-article', JSON.stringify(article));
         
-        // Navigate to details page
+        // Simple navigation: just go to details page
         window.location.href = 'details.html';
     } catch (error) {
         console.error('Error opening article details:', error);
@@ -476,6 +539,38 @@ function toggleFavorite(encodedArticle) {
     try {
         const article = JSON.parse(decodeURIComponent(encodedArticle));
         
+        const existingIndex = AppState.favoriteArticles.findIndex(fav => fav.url === article.url);
+        
+        if (existingIndex !== -1) {
+            // Remove from favorites
+            AppState.favoriteArticles.splice(existingIndex, 1);
+            showNotification(translations[AppState.currentLanguage]['remove-from-favorites'], 'success');
+        } else {
+            // Add to favorites
+            AppState.favoriteArticles.push(article);
+            showNotification(translations[AppState.currentLanguage]['add-to-favorites'], 'success');
+        }
+        
+        // Save to localStorage
+        localStorage.setItem(CONFIG.STORAGE_KEYS.FAVORITES, JSON.stringify(AppState.favoriteArticles));
+        
+        // Re-render the current view
+        if (AppState.showingFavorites) {
+            renderNewsGrid(AppState.favoriteArticles);
+        } else {
+            renderNewsGrid(AppState.newsArticles);
+        }
+        
+        // Update favorites button text
+        updateFavoritesButton();
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        showNotification('Error updating favorites', 'error');
+    }
+}
+
+function toggleFavoriteFromData(article) {
+    try {
         const existingIndex = AppState.favoriteArticles.findIndex(fav => fav.url === article.url);
         
         if (existingIndex !== -1) {
@@ -873,7 +968,9 @@ function initializeDetailsPage() {
     const backBtn = document.getElementById('back-btn');
     if (backBtn) {
         backBtn.addEventListener('click', () => {
-            window.history.back();
+           
+                window.location.href = 'index.html';
+            
         });
     }
 }
@@ -908,13 +1005,28 @@ function renderArticleDetails(article) {
         }
     });
     
-    // Set article image
+    // Set article image with better handling
     const articleImage = document.getElementById('article-image');
-    if (articleImage && article.urlToImage) {
-        articleImage.src = article.urlToImage;
-        articleImage.alt = article.title;
-    } else if (articleImage) {
-        articleImage.style.display = 'none';
+    if (articleImage) {
+        let imageUrl = article.urlToImage;
+        
+        // Check if image URL is valid
+        if (!imageUrl || imageUrl.includes('removed') || imageUrl === 'null' || imageUrl.trim() === '') {
+            // Use placeholder with source name
+            const sourceName = (article.source?.name || 'News Article').replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 20);
+            imageUrl = `https://via.placeholder.com/800x400/2563eb/ffffff?text=${encodeURIComponent(sourceName)}`;
+        }
+        
+        articleImage.src = imageUrl;
+        articleImage.alt = (article.title || 'News Article').replace(/"/g, '');
+        
+        // Add error handling for article image
+        articleImage.onerror = function() {
+            this.onerror = null; // Prevent infinite loop
+            this.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400"%3E%3Crect width="800" height="400" fill="%23e2e8f0"/%3E%3Ctext x="400" y="200" text-anchor="middle" dy=".3em" fill="%2364748b" font-family="sans-serif" font-size="24"%3EImage Not Available%3C/text%3E%3C/svg%3E';
+        };
+        
+        articleImage.style.display = 'block';
     }
     
     // Set read full article link
@@ -1023,6 +1135,10 @@ async function loadRelatedArticles(currentArticle) {
                 relatedGrid.innerHTML = relatedArticles
                     .map((article, index) => createNewsCard(article, index))
                     .join('');
+                
+                // Add event listeners to related article cards
+                addNewsCardEventListeners(relatedGrid);
+                
                 relatedSection.style.display = 'block';
             }
         }
@@ -1120,6 +1236,120 @@ window.addEventListener('unhandledrejection', (event) => {
     event.preventDefault();
 });
 
-// Export functions for global access (for onclick handlers in HTML)
-window.openArticleDetails = openArticleDetails;
-window.toggleFavorite = toggleFavorite;
+// Functions are now accessed via event listeners instead of global onclick handlers
+
+// ===========================
+// NAVIGATION HISTORY MANAGEMENT
+// ===========================
+function generateArticleId(article) {
+    // Generate a unique ID for article based on title and URL
+    return btoa(encodeURIComponent(article.title + '|' + article.url)).replace(/[^a-zA-Z0-9]/g, '').substring(0, 20);
+}
+
+function getCurrentPageType() {
+    const currentPage = window.location.pathname.split('/').pop();
+    if (currentPage === 'details.html') return 'detail';
+    if (currentPage === 'contact.html') return 'contact';
+    return 'home';
+}
+
+function navigateBack() {
+    try {
+        const navHistory = JSON.parse(localStorage.getItem('nav-history') || '[]');
+        
+        if (navHistory.length <= 1) {
+            // No history, go to home page
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        // Remove current page from history
+        navHistory.pop();
+        
+        // Get the previous page
+        const previousPage = navHistory[navHistory.length - 1];
+        
+        // Update history in localStorage
+        localStorage.setItem('nav-history', JSON.stringify(navHistory));
+        
+        if (previousPage.page === 'detail') {
+            // Navigate to previous detail page
+            console.log('Navigating back to previous detail page:', previousPage.articleTitle);
+            if (previousPage.articleData) {
+                // Use stored article data directly
+                console.log('Using stored article data for navigation');
+                localStorage.setItem('current-article', JSON.stringify(previousPage.articleData));
+                window.location.href = 'details.html';
+            } else {
+                // Fallback: try to find article in current data
+                console.log('Article data not found in history, searching in current articles');
+                const allArticles = [...AppState.newsArticles, ...AppState.favoriteArticles];
+                const targetArticle = allArticles.find(article => 
+                    generateArticleId(article) === previousPage.articleId
+                );
+                
+                if (targetArticle) {
+                    console.log('Found article in current data, navigating');
+                    localStorage.setItem('current-article', JSON.stringify(targetArticle));
+                    window.location.href = 'details.html';
+                } else {
+                    // Article not found, go to home
+                    console.log('Previous article not found, returning to home');
+                    window.location.href = 'index.html';
+                }
+            }
+        } else {
+            // Navigate to previous non-detail page
+            window.location.href = previousPage.url.includes('http') ? 'index.html' : previousPage.url;
+        }
+    } catch (error) {
+        console.error('Error in navigation:', error);
+        // Fallback to browser back or home
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+}
+
+function clearNavigationHistory() {
+    localStorage.removeItem('nav-history');
+    AppState.navigationHistory = [];
+    console.log('Navigation history cleared');
+}
+
+function debugNavigationHistory() {
+    const navHistory = JSON.parse(localStorage.getItem('nav-history') || '[]');
+    console.log('Current navigation history:', navHistory);
+    return navHistory;
+}
+
+function initializeNavigationHistory() {
+    // Initialize navigation history for current page
+    const currentUrl = window.location.href;
+    const currentPage = getCurrentPageType();
+    
+    let navHistory = JSON.parse(localStorage.getItem('nav-history') || '[]');
+    
+    // Only add current page if it's not already the last entry
+    if (navHistory.length === 0 || navHistory[navHistory.length - 1].url !== currentUrl) {
+        const historyEntry = {
+            url: currentUrl,
+            page: currentPage,
+            timestamp: Date.now()
+        };
+        
+        if (currentPage === 'detail') {
+            const currentArticle = JSON.parse(localStorage.getItem('current-article') || 'null');
+            if (currentArticle) {
+                historyEntry.articleId = generateArticleId(currentArticle);
+                historyEntry.articleTitle = currentArticle.title;
+                historyEntry.articleData = currentArticle; // Store complete article data
+            }
+        }
+        
+        navHistory.push(historyEntry);
+        localStorage.setItem('nav-history', JSON.stringify(navHistory));
+    }
+}
