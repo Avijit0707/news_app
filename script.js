@@ -5,6 +5,8 @@ const CONFIG = {
     // NewsAPI.org API configuration
     API_KEY: 'd0616f5b1ead4984bb9c75b99b8c9eee', // Replace with your actual API key
     BASE_URL: 'https://newsapi.org/v2',
+    // CORS Proxy fallback for deployment issues
+    CORS_PROXY: 'https://api.allorigins.win/raw?url=',
     DEFAULT_COUNTRY: 'us',
     DEFAULT_CATEGORY: 'general',
     
@@ -252,10 +254,41 @@ async function fetchNews(category = AppState.currentCategory, searchQuery = '', 
         
         url += `apiKey=${CONFIG.API_KEY}&pageSize=${CONFIG.PAGE_SIZE}&page=${page}&sortBy=publishedAt`;
         
-        const response = await fetch(url);
+        // Try direct API call first
+        let response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'NewsPortal/1.0',
+            }
+        });
+        
+        // If direct call fails with CORS/426 error, try with CORS proxy
+        if (!response.ok && (response.status === 426 || response.status === 0)) {
+            console.log('Direct API call failed, trying CORS proxy...');
+            const proxiedUrl = `${CONFIG.CORS_PROXY}${encodeURIComponent(url)}`;
+            response = await fetch(proxiedUrl);
+        }
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Provide specific error messages for different status codes
+            let errorMessage = 'Failed to fetch news';
+            switch (response.status) {
+                case 426:
+                    errorMessage = 'HTTPS required - API access blocked. Please deploy on HTTPS or use a CORS proxy.';
+                    break;
+                case 429:
+                    errorMessage = 'API rate limit exceeded. Please try again later.';
+                    break;
+                case 401:
+                    errorMessage = 'Invalid API key. Please check your NewsAPI key.';
+                    break;
+                case 403:
+                    errorMessage = 'API access forbidden. Check your NewsAPI plan.';
+                    break;
+                default:
+                    errorMessage = `HTTP error! status: ${response.status}`;
+            }
+            throw new Error(errorMessage);
         }
         
         const data = await response.json();
@@ -267,12 +300,59 @@ async function fetchNews(category = AppState.currentCategory, searchQuery = '', 
         return data;
     } catch (error) {
         console.error('Error fetching news:', error);
-        showNotification(translations[AppState.currentLanguage]['error-loading-news'], 'error');
-        return { articles: [], totalResults: 0 };
+        
+        // Show specific error message if available
+        const errorMsg = error.message.includes('426') ? 
+            'News service requires HTTPS. Please access this site via HTTPS or contact support.' :
+            translations[AppState.currentLanguage]['error-loading-news'];
+            
+        showNotification(errorMsg, 'error');
+        
+        // Return mock data for development/demo purposes when API fails
+        return getMockNewsData();
     } finally {
         AppState.isLoadingNews = false;
         showLoadingSpinner(false);
     }
+}
+
+// Mock data function for fallback when API is not accessible
+function getMockNewsData() {
+    return {
+        articles: [
+            {
+                title: "Sample News Article 1",
+                description: "This is a sample news article for demonstration purposes. The actual NewsAPI requires HTTPS access.",
+                url: "https://example.com/news1",
+                urlToImage: "https://via.placeholder.com/400x300/2563eb/ffffff?text=Sample+News+1",
+                publishedAt: new Date().toISOString(),
+                source: { name: "Sample Source" },
+                author: "Demo Author",
+                content: "This is sample content for the news article..."
+            },
+            {
+                title: "Sample News Article 2", 
+                description: "Another sample news article. To access real news, ensure your site is served over HTTPS.",
+                url: "https://example.com/news2",
+                urlToImage: "https://via.placeholder.com/400x300/10b981/ffffff?text=Sample+News+2",
+                publishedAt: new Date(Date.now() - 3600000).toISOString(),
+                source: { name: "Demo News" },
+                author: "Sample Reporter",
+                content: "Sample content for demonstration purposes..."
+            },
+            {
+                title: "Technology Update Sample",
+                description: "Sample technology news article. Deploy this project on HTTPS to access real NewsAPI data.",
+                url: "https://example.com/news3", 
+                urlToImage: "https://via.placeholder.com/400x300/f59e0b/ffffff?text=Tech+News",
+                publishedAt: new Date(Date.now() - 7200000).toISOString(),
+                source: { name: "Tech Weekly" },
+                author: "Tech Writer",
+                content: "Sample technology content..."
+            }
+        ],
+        totalResults: 3
+    };
 }
 
 async function loadNews(reset = false) {

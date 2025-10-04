@@ -86,6 +86,42 @@ A modern, responsive news portal built with **HTML**, **CSS**, and **JavaScript*
    - **Option C**: Node.js HTTP server: `npx http-server`
    - **Option D**: Open `index.html` directly (may have CORS issues)
 
+## 🚨 **Deployment Troubleshooting**
+
+### **HTTP 426 Error (Upgrade Required)**
+If you encounter this error when deploying:
+```
+Failed to load resource: the server responded with a status of 426
+```
+
+**Root Cause:** NewsAPI requires HTTPS connections for security.
+
+**Solutions:**
+1. **Deploy on HTTPS-enabled hosting:**
+   - **GitHub Pages** (free) - Automatically serves over HTTPS
+   - **Netlify** (free) - Auto HTTPS with custom domains
+   - **Vercel** (free) - Built-in HTTPS support
+   - **Firebase Hosting** (free) - HTTPS by default
+
+2. **Force HTTPS redirect** (add to your HTML head):
+   ```html
+   <script>
+   if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+       location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+   }
+   </script>
+   ```
+
+3. **Alternative APIs** for HTTP environments:
+   - Use the built-in fallback mock data
+   - Consider alternative news APIs that support HTTP
+   - Implement a backend proxy server
+
+4. **Local Development:**
+   - Use `localhost` or `127.0.0.1` (works with HTTP)
+   - Use Live Server extension in VS Code
+   - Python: `python -m http.server 8000`
+
 ### Project Structure
 ```
 news_app/
